@@ -1,4 +1,7 @@
-﻿ using UnityEngine;
+﻿ using Unity.Cinemachine;
+ using Unity.Mathematics;
+ using UnityEngine;
+ using Random = UnityEngine.Random;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -6,6 +9,7 @@ using UnityEngine.InputSystem;
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
  */
 
+// ReSharper disable once CheckNamespace
 namespace StarterAssets
 {
     [RequireComponent(typeof(CharacterController))]
@@ -14,6 +18,7 @@ namespace StarterAssets
 #endif
     public class ThirdPersonController : MonoBehaviour
     {
+        private static readonly int Aiming = Animator.StringToHash("Aiming");
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
@@ -60,6 +65,8 @@ namespace StarterAssets
         public LayerMask GroundLayers;
 
         [Header("Cinemachine")]
+        [SerializeField] private CinemachineCamera _cinemachineCamera;
+        
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
         public GameObject CinemachineCameraTarget;
 
@@ -74,6 +81,12 @@ namespace StarterAssets
 
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
+        
+        [Tooltip("FOV when not aiming")]
+        [SerializeField] private float _defaultFov = 60.0f;
+        
+        [Tooltip("FOV when aiming")]
+        [SerializeField] private float _aimFov = 45.0f;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -159,6 +172,7 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+            HandleAiming();
         }
 
         private void LateUpdate()
@@ -251,7 +265,7 @@ namespace StarterAssets
             // normalise input direction
             Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
-            // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
+            // note: Vector2's != operator uses approximation so is not floating point error-prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
             if (_input.move != Vector2.zero)
             {
@@ -386,6 +400,20 @@ namespace StarterAssets
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+            }
+        }
+
+        private void HandleAiming()
+        {
+            if (_input.secondary)
+            {
+                _animator.SetBool(Aiming, true);
+                _cinemachineCamera.Lens.FieldOfView = Mathf.Lerp(_cinemachineCamera.Lens.FieldOfView, _aimFov, 10f * Time.deltaTime);
+            }
+            else if (!_input.secondary)
+            {
+                _animator.SetBool(Aiming, false);
+                _cinemachineCamera.Lens.FieldOfView = Mathf.Lerp(_cinemachineCamera.Lens.FieldOfView, _defaultFov, 10f * Time.deltaTime);
             }
         }
     }
