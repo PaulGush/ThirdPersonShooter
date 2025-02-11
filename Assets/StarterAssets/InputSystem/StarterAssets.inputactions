@@ -43,12 +43,12 @@
                 },
                 {
                     "name": "Secondary",
-                    "type": "PassThrough",
+                    "type": "Value",
                     "id": "d1699a17-4d41-4420-893e-9d2c17fafc15",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [

@@ -87,6 +87,9 @@ namespace StarterAssets
         
         [Tooltip("FOV when aiming")]
         [SerializeField] private float _aimFov = 45.0f;
+        
+        [Tooltip("GameObject that player is aiming at")]
+        [SerializeField] private GameObject _aimTarget;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -171,8 +174,8 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            Move();
             HandleAiming();
+            Move();
         }
 
         private void LateUpdate()
@@ -232,7 +235,7 @@ namespace StarterAssets
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
-            // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
+            // note: Vector2's == operator uses approximation so is not floating point error-prone, and is cheaper than magnitude
             // if there is no input, set the target speed to 0
             if (_input.move == Vector2.zero) targetSpeed = 0.0f;
 
@@ -274,8 +277,24 @@ namespace StarterAssets
                 float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
                     RotationSmoothTime);
 
-                // rotate to face input direction relative to camera position
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                if (_hasAnimator && _animator.GetBool(Aiming))
+                {
+                    Vector3 aimDirection = (_aimTarget.transform.position - this.transform.position).normalized;
+                    this.transform.forward = Vector3.Lerp(this.transform.forward, aimDirection, 20f * Time.deltaTime);
+                }
+                else
+                {
+                    // rotate to face input direction relative to camera position
+                    this.transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                }
+            }
+            else
+            {
+                if (_hasAnimator && _animator.GetBool(Aiming))
+                {
+                    Vector3 aimDirection = (_aimTarget.transform.position - this.transform.position).normalized;
+                    this.transform.forward = Vector3.Lerp(this.transform.forward, aimDirection, 20f * Time.deltaTime);
+                }
             }
 
 
