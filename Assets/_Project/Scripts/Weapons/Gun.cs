@@ -1,8 +1,7 @@
-using System;
 using _Project.Scripts.Weapons.WeaponData.GunData;
 using Flyweight;
 using Sirenix.OdinInspector;
-using StarterAssets;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -37,6 +36,11 @@ namespace _Project.Scripts.Weapons
             m_playerInput.actions["Primary"].performed -= PlayerInput_Primary;
         }
 
+        private void Update()
+        {
+            Debug.Log("Shoot Point Rotation: " + m_shootPoint.eulerAngles);
+        }
+
         private void PlayerInput_Primary(InputAction.CallbackContext obj)
         {
             RequestShot();
@@ -49,7 +53,7 @@ namespace _Project.Scripts.Weapons
 
         private void RequestShot()
         {
-            if (m_currentAmmoInMagazine == 0) return;
+            //if (m_currentAmmoInMagazine == 0) return;
             
             Shoot();
         }
@@ -60,10 +64,10 @@ namespace _Project.Scripts.Weapons
 
             Debug.Log("Current Ammo in Magazine: " + m_currentAmmoInMagazine);
             var bulletObject = FlyweightFactory.Spawn(m_projectileSettings);
-            bulletObject.transform.position = m_shootPoint.position;
-            bulletObject.transform.rotation = transform.rotation;
             
+            bulletObject.transform.SetPositionAndRotation(m_shootPoint.position, Quaternion.Euler(m_shootPoint.eulerAngles));
             
+            //TODO Raycast from camera to hit point
             /*var screenCenter = new Vector2(Screen.width / 2, Screen.height / 2);
             var ray = m_camera.ScreenPointToRay(screenCenter);
             if (Physics.Raycast(ray, out var hit, 100f))

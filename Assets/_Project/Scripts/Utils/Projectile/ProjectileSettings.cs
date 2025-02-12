@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityUtils;
 
@@ -19,6 +20,11 @@ namespace Flyweight
             flyweight.settings = this;
             
             return flyweight;
-        }        
+        }
+        
+        public override void OnRelease(Flyweight f) {
+            base.OnRelease(f);
+            f.gameObject.transform.Reset();
+        }
     }
 }
