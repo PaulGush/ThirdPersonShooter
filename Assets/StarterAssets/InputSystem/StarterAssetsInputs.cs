@@ -12,6 +12,7 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool primary;
 		public bool secondary;
 
 		[Header("Movement Settings")]
@@ -45,6 +46,11 @@ namespace StarterAssets
 			SprintInput(!value.isPressed);
 		}
 		
+		public void OnPrimary(InputValue value)
+		{
+			PrimaryInput(value.isPressed);
+		}
+		
 		public void OnSecondary(InputValue value)
 		{
 			SecondaryInput(value.isPressed);
@@ -70,6 +76,11 @@ namespace StarterAssets
 		public void SprintInput(bool newSprintState)
 		{
 			sprint = newSprintState;
+		}
+		
+		public void PrimaryInput(bool newPrimaryState)
+		{
+			primary = newPrimaryState;
 		}
 		
 		public void SecondaryInput(bool newSecondaryState)
