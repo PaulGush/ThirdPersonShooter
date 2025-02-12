@@ -1,11 +1,12 @@
 using _Project.Scripts.Weapons.WeaponData.GunData;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace _Project.Scripts.Weapons
 {
     public class Gun : Weapon
     {
-        [SerializeField] private GunData m_gunData;
+        [InlineEditor, SerializeField] private GunData m_gunData;
         
         private Camera m_camera;
         
