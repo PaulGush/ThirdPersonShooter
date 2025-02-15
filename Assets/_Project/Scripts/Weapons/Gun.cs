@@ -36,11 +36,6 @@ namespace _Project.Scripts.Weapons
             m_playerInput.actions["Primary"].performed -= PlayerInput_Primary;
         }
 
-        private void Update()
-        {
-            Debug.Log("Shoot Point Rotation: " + m_shootPoint.eulerAngles);
-        }
-
         private void PlayerInput_Primary(InputAction.CallbackContext obj)
         {
             RequestShot();
